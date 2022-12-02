@@ -1,0 +1,85 @@
+"""1.Principle of isolation"""
+
+- Isolation is a fundamental concept in microservices architectures and more generally in programming. It is a set of 
+techniques consisting of isolating processes from each other and/or from the host machine.
+
+- Let's take an example:
+A company has a production server, hosted in the cloud or not, on which the various processes created in the company are 
+deployed. These processes can be data science applications or not. Developers, Data Scientists and other business actors 
+will create applications, routines, processes in development environments (usually personal computers).
+
+- There may already be a first problem: how to ensure that the operation of the application is the same on the production 
+server as in the development environment? Indeed, the application requires certain libraries, certain tools and especially 
+certain versions of these tools to work. It is therefore important to embed the environment in which the application runs 
+locally.
+-----------------------------------------------------------------------------------------------------------------------------------
+- We can then encounter a second problem when several applications are in production on the same server: these applications 
+may have different tool needs but especially contradictory needs. For example, an application using Python might only work 
+with version 1.16.1 of the library, while another would require a newer version. These conflicts can be problematic if 
+we do not want to standardize the different versions of our applications (which would require a considerable development and 
+update effort).numpy
+
+- We must therefore find a way to isolate the different applications. We can then imagine this notion of isolation by 
+imagining boxes in which applications are enclosed, isolated from the rest of the machine and other applications and in 
+which they can find all the necessary resources to function properly.
+
+- Be careful, isolation does not have to be total: in some cases, it is necessary to communicate with or between applications: 
+insulation is therefore done in a controlled and not hermetic way.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+"""Isolation by virtualisation"""
+
+There are different ways to isolate processes. One of the most commonly used techniques is virtualization: it involves 
+creating an environment that hides the true features, tools, and resources of the host machine. The application then no 
+longer sees the resources offered by the host machine in a generic way but additional resources.
+
+Let's put ourselves from the point of view of an application in its "box". The application does not see that it is in an 
+environment that is not a real environment: it has access to all the resources it needs (memory, CPU, disk, ...) even if 
+these resources are actually processed by intermediaries. In addition, she only sees the tools that are included in the 
+box and operates as if she were alone on the machine.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+"""There are different virtualization devices:"""
+
+- Virtual machines (on-premises or cloud-hosted)
+- Containers
+- Virtual environments
+
+- A virtual machine is actually an emulation of a complete machine: a computer within the computer. A virtual machine has its 
+own operating system, allocated resources (memory and disk). For example, on a personal computer whose operating system is 
+Windows, one can create a virtual machine with the Ubuntu operating system. Thus, the operation of applications in this 
+virtual machine is not affected by the Windows operating system. They work as if they were on a host machine that comes 
+with Ubuntu.
+
+- Developing in a virtual machine therefore makes it possible to isolate the processes of the host machine. If you want to 
+deploy the application on a production server, simply deploy the application and the virtual machine.
+
+- Today, it is easy to use virtual machines hosted in the cloud: cloud providers allow the use of machines hosted on servers. 
+The resources of these servers are shared by different users, often from different organizations. Using virtual machines 
+allows users to not see other users while sharing the same physical hardware.
+
+- Note that these cloud providers provide well-defined virtual machine patterns: some versions of Ubuntu or Windows for example. 
+These patterns make it easy to create production environments similar to development environments.
+
+- But there is a problematic aspect to these machines: because they use an operating system, they are resource-intensive. 
+It takes resources to run the operating system.
+-----------------------------------------------------------------------------------------------------------------------------------
+- The container is another virtualization technology. If the principle is similar to that of the virtual machine, it does 
+not include an operating system. Containers are therefore lighter, both from the point of view of execution resources 
+as well as from the point of view of image size. In this course, we will study the use of Docker containers.
+-----------------------------------------------------------------------------------------------------------------------------------
+- Finally, we could talk about a technology specific to Python: virtual environments: to run a Python script, we need two 
+things, namely an interpreter, that is to say a version of Python, and a directory in which the source files of the 
+libraries used are stored. Using a virtual environment consists of using a specific directory where these libraries are 
+stored. Thus The virtual environment allows to have several versions of the same library installed on the same machine 
+and used by different applications.
+
+- We can also note a rather interesting thing: all solutions offering to use these virtualization technologies offer image systems 
+to reproduce (these will be detailed in the next part). We have, a bit like object-oriented programming, a model system that 
+we can choose to instantiate at will. For cloud providers, this is the catalog of pre-configured machines (AMIs for AWS). 
+For containers, these are the pre-existing Docker images as well as the DockerFiles. In the case of virtual environments, 
+we find the files generally used.requirements.txt
+
+- Thus, virtualization makes it possible both to isolate processes from each other, to isolate them from the host machine 
+but also to instantiate easily, quickly identical virtual devices between them: one can easily reproduce a virtual environment, 
+a virtual machine or a container.

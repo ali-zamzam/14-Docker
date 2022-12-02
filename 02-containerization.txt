@@ -1,0 +1,78 @@
+"""Containerization technology"""
+
+- Containers contain a set of applications, libraries and executables. Unlike a virtual machine which uses a hypervisor to 
+simulate the physical hardware on the operating system of the machine that is used, the host machine, and which runs an 
+operating system, the container takes over the host machine's operating system.
+
+- The term container or container is very well chosen to describe this technology: in the transport of goods, a container is a 
+box that can contain everything. From the outside of the container, we don't know what's inside and all we need is to know 
+how to handle a big metal box. From the inside, we don't know what means of transport is used (cargo, truck, train, ...) 
+and we don't know what the other containers contain either.
+- In fact, a container is only a set of restrictions on the resources (cgroups) or on the user groups, the network and the 
+processes (namespaces) which apply around a process. When a container is launched, a process is launched at the same time. 
+When the process terminates, the container is also terminated.
+
+- Let's take the example of a Linux system: a container can run a process, for example the training of a Machine Learning model, 
+by allocating certain resources to this container but above all by isolating the process from the rest of the machine, that is 
+to say by not giving it access to the file system of the host machine, to the various users of the host machine and by giving 
+it its own IP addressing system.
+
+- One of the first advantages of containerization is in the lightness of the containers themselves: they do not contain an 
+operating system and therefore are easier to run if you have limited resources. Moreover, where virtual machines require the 
+operation of a hypervisor, a process emulating the physical resources of a machine, containers directly use the properties 
+of Linux systems to run.
+
+- Containers work particularly well with Linux systems. They can also work with Windows systems but we must then use an 
+additional virtualization layer to emulate a Linux system: we then need a VM.
+Another advantage of containers is the container image system. Images are models, container patterns that you can choose 
+to instantiate as you wish. We can compare images to classes in object-oriented programming: containers are class instances 
+while images are classes.
+
+- The images are built according to a system of trees. We start from a basic image and little by little we add components. 
+On the base image, we thus add a Linux distribution, a distribution, libraries, software, ... This tree system is interesting 
+because it makes it possible to pool the resources necessary to create the images: if two images are based on a Linux system, 
+Ubuntu for example, the host machine does not need to store that part of the image twice.
+
+- There are different technologies that allow the use of containers: runC, containerd, cri-o... A standardization initiative 
+for container technologies is led by the Linux Foundation via the Open Container Initiative.
+
+-----------------------------------------------------------------------------------------------------------------------------
+"""Docker"""
+
+- Docker is a containerd-based tool that makes it easy to create containers. It was originally an internal project of a 
+French company, named dotCloud and the project will then be published as an Open Source project in 2013. Docker is a 
+major player in the container ecosystem because it has made it possible to facilitate and democratize the use of containers.
+
+- Docker is indeed an easy-to-use tool, which allows rapid and secure deployment. In addition, one of the great strengths of 
+Docker lies in its image directory: DockerHub. This directory contains more than 5 million images, including many official 
+images, that is to say images created by companies developing tools: almost all companies that develop Open Source databases 
+are required to offer an image "Dockerized" their databases on the DockerHub.
+
+- DockerHub is a very interesting tool and, without a doubt, one of the strong points of Docker. We therefore advise you to 
+create an account there and explore the different images found there: MySQL, MongoDB, Spark, Hadoop, Jupyter, ...
+Another strength of Docker is the ease with which you can create an image and share it, especially on the DockerHub. Via a 
+file system, the Dockerfiles, we can create a container image in a few minutes and share it just as quickly. Thus a good 
+number of images that can be found on DockerHub are in fact created by "amateurs" and offered to everyone.
+
+- Finally, it is interesting to note that most Cloud providers today offer PaaS (Platform as a Service) solutions in which 
+you can easily deploy Docker images: the cloud provider then allows us to launch containers without having to to take care 
+of the architecture and the parameterization of the machine which hosts the container.
+
+- Docker today presents a very large community (7 million users) with two great editions of its tool, a community version, 
+free, which we will use in this course and a version for companies which allows greater automation as well as increased 
+security
+
+-----------------------------------------------------------------------------------------------------------------------------
+"""How Docker works"""
+
+- Docker operates on a client-server architecture. A client, in this docker-cli course, i.e. Docker's command line interface, 
+comes to query a daemon, docker daemon using a REST API. It is this daemon that takes care of the various tasks of building 
+and managing images, launching containers.
+
+- Finally, a last important component of Docker are the Docker registries, which are image directories that the Docker daemon 
+will query to download an image to launch. We saw in the previous part that DockerHub was the public directory generally 
+used by Docker users, but in some cases, in particular with the enterprise editions of Docker, trusted registries are used 
+instead, that is to say private directories.
+
+- Finally, note that the exact operation of Docker and containers in general is managed by the Linux system of the host 
+machine or by its emulator if you are working on a Windows machine.

@@ -1,0 +1,284 @@
+"""Containers and images"""
+
+"""install"""
+# https://docs.docker.com/engine/install/
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""Once installed, we can create docker folder and launch the Docker daemon using the following command:"""
+
+# mkdir docker
+
+# sudo service docker start
+
+"""When Docker is launched, we will be able to launch our first container. For this, we will use a classic image: hello-world."""
+
+# docker container run  hello-world
+
+"""
+- Note that once these steps are completed the container is then stopped.
+- If we want to relaunch an image of this same container, we can run the same command"""
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""we can return the list of locally downloaded images using the following command.
+
+Run this command to see the list of available images"""
+
+# docker image ls
+
+# REPOSITORY                                      TAG                          IMAGE ID       CREATED        SIZE
+# docker.elastic.co/kibana/kibana                 8.1.2                        a6d3a3c39d21   7 months ago   84
+
+"""
+- REPOSITORY: the name of the image
+- TAG: a tag that helps to differentiate between images that have the same name
+- IMAGE ID: a unique identifier that identifies an image
+- CREATED: the date the image was created
+- SIZE: the image size"""
+
+
+"""When you create a Docker image, you give it a name that makes it easy to identify. You can also give it a tag or a label 
+that allows you to differentiate between different versions of the same image. If no tag is specified, Docker considers 
+that the tag used is latest. For the same name, or the same repository, we can have several different tags that coexist. 
+In addition, a unique id is assigned to it when the image is downloaded or created locally: the id corresponds to the 
+hashed image."""
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""download an image and run container"""
+
+"""To download an image without launching a container, you can use the docker image pull command. 
+We will download an image of the Ubuntu distribution.
+
+Run this command to download ubuntu image with tag latest"""
+
+# docker image pull ubuntu:latest
+
+
+"""Run this command to launch an instance of the ubuntu:latest image."""
+
+# docker container run ubuntu:latest
+
+"""This command exits without producing any output. Indeed, a Docker container is not intended to ***run indefinitely***. 
+When you launch a container, a command is executed and when it ends, the container stops. We can choose to execute a 
+command that **allows us to interact with the container**. In our case, we are going to use a bash console to interact 
+with the interior of the container. To do this, we will have to use the (-it or --interactive argument) and specify the 
+tool to use."""
+
+# docker container run -it ubuntu:latest
+
+"""We can see that we are in the container which behaves like an ubuntu machine. Here we are logged in as root. 
+You can explore the interior of this container to see that we are indeed dealing with an ubuntu system."""
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""In another console, we will display the list of containers in operation."""
+
+# docker container ls
+
+# output
+# CONTAINER ID   IMAGE           COMMAND   CREATED          STATUS         PORTS     NAMES
+# 6d9892098797   ubuntu:latest   "bash"    10 seconds ago   Up 9 seconds             busy_booth
+
+"""We can see our container represented by its characteristics:
+
+- CONTAINER ID: unique identifier of the container
+- IMAGE: the name of the image used
+- COMMAND: the command used when launching the container
+- CREATED: the launch date of the container
+- STATUS: the status of the container
+- PORTS: the tunnels created between the machine and the container
+- NAMES: unique name used to easily identify the container"""
+
+
+"""Run the exit command from inside the container
+
+Once this command is executed, the bash command is finished and the container stops."""
+
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""Run this command again to list the running containers
+"""
+# docker container ls
+
+"""We no longer see any containers. However, you can list the stopped containers by adding the -a or --all argument.
+
+Run this command to list all containers"""
+
+# docker container ls --all
+
+# output
+# CONTAINER ID   IMAGE                COMMAND            CREATED          STATUS                        PORTS     NAMES
+# 6d9892098797   ubuntu:latest         "bash"            5 minutes ago    Exited (0) 3 minutes ago                busy_booth
+# 5e3d519cdc07   hello-world           "/hello"
+"""
+note that all these containers have a command to execute. Hello-world images use the (/hello )command. 
+By default, the ubuntu container is launched with the (/bin/bash )command."""
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""start container"""
+
+"""We can restart a stopped container using the docker start command followed by the ****(container name or its id)****. 
+For example, if the container is called practical_murdock (the names are randomly generated), one can run the 
+following command:"""
+
+# docker container start practical_murdock
+
+"""in our example named busy_booth"""
+
+# docker container start busy_booth
+
+"""By default, restarting a stopped container happens in the background and displays neither standard output nor standard error. 
+To redirect these outputs to the machine's standard output, you can use the -a or --attach argument."""
+
+# docker container start -a busy_booth
+
+# docker container ls --all
+
+# CONTAINER ID   IMAGE              COMMAND                  CREATED            STATUS               PORTS     NAMES
+# 6d9892098797   ubuntu:latest      "bash"                   20 minutes ago     Up 9 minutes                   busy_booth
+
+"""STATUS  --> Up 9 minutes (it's running)"""
+
+"""If we display the stopped containers again, the creation date of the container does not change but its status has changed. 
+We cannot a priori interact with a container that has already been stopped: in reality, Docker is not really made for this 
+kind of situation. A container can be used several times if it performs a given task but if you want to use a container to 
+interact with it, you will prefer to use a new container.
+"""
+# --------------------------------------------------------------------------------------------------------------------------------
+"""stop container"""
+
+"""You can use the docker container stop command followed by the identifier of a working container or its name to stop it"""
+
+# docker container stop busy_booth     (busy_booth the name of running container)
+
+
+# docker container ls -a
+
+
+# CONTAINER ID   IMAGE                 COMMAND            CREATED           STATUS                        PORTS     NAMES
+# 6d9892098797   ubuntu:latest         "bash"             21 minutes ago    Exited (137) 15 seconds ago             busy_booth
+
+"""STATUS  -->Exited (137) 15 seconds ago"""
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""rename container"""
+
+# docker rename CONTAINER NEW_NAME       --> (CONTAINER the old name)
+
+"""Container names are randomly chosen from an adjective and a famous scientist's name. To choose a container name yourself, 
+you can use the -n or --name argument followed by the container name. Be careful however not to name two containers in
+the same way: if you want to rename a container in the same way as another container, you have to stop and then delete 
+the first one.
+
+A container can be launched in a detached way, ie in the background, using the -d or --detach argument.
+
+In a command, run the following command to launch a container in the background"""
+
+# docker container run -it --detach --name my_ubuntu ubuntu:latest bash
+
+"""Only the container id is displayed in the console, but if you run the docker container ls command, you can see the container 
+in operation."""
+
+# ubuntu@ip-172-31-45-49:~/docker$ docker container run -it --detach --name my_ubuntu ubuntu:latest bash
+# 8146c47b5f4f4d9f4af79bec2e6082735a9d220dc2e58681f191ba5eea492199
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""delete container"""
+
+"""We are starting to have a few containers stopped. You can choose to delete these containers using the 
+docker container rm command followed by the name or identifier of the container stopped"""
+
+"""stop it first"""
+
+# docker container stop my_ubuntu
+
+# docker container rm my_ubuntu
+
+"""By adding the -rm or --remove argument, you can force the deletion when stopping a container.
+
+Relaunch this container with this new argument"""
+
+# docker container run -it --rm --detach --name my_ubuntu ubuntu:latest bash
+
+"""check that the container has been deleted """
+# docker container ls --all
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""One of the last simple arguments that can be used to launch a container is -e. This argument is used to create an environment 
+variable. This amounts to defining a variable with an export for example. This command can be very useful for passing 
+container-specific arguments."""
+
+# docker container run -it --rm --name my_ubuntu -e "my_variable='bonjour le monde'" ubuntu:latest bash
+
+"""Once in the container, run the following command to check the contents of the variable my_variable"""
+# echo $my_variable
+
+# ubuntu@ip-172-31-45-49:~/docker$ docker container run -it --rm --name ubuntu -e "ma_variable='bonjour le monde'" ubuntu:latest bash
+# root@3740b1f0c22e:/# echo $ma_variable
+# 'bonjour le monde'
+
+# Argument                    Usage
+# -it or --interactive        Allows to interact with the container via the command passed
+# -d or --detach              Launch the container in the background
+# -n or --name                Allows to choose the name of the container
+# --rm                        Force container deletion after shutdown
+# -e                          Sets an environment variable in the container
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""inspect"""
+
+"""You can use the docker container inspect command followed by the container identifier or its name to be able to see the 
+properties of the container:
+"""
+# docker container inspect my_ubuntu
+
+"""
+This command returns a list in JSON format. This list only contains the my_ubuntu container but we could have inspected 
+several containers at once. We will see in more detail some of the attributes of the container but for now we can see 
+the information on the status, on the name, the id, ... We can also see the details on the image used."""
+
+
+"""Stop the container
+
+Run the command to inspect the container"""
+
+# docker container inspect my_ubuntu
+
+"""We can see that the content of this JSON has changed, especially the State attribute."""
+
+# --------------------------------------------------------------------------------------------------------------------------------
+"""Download elasticsearch image with tag 7.2.0"""
+
+# docker image pull elasticsearch:7.2.0
+
+"""Launch an instance of ElasticSearch with the following properties:
+
+in detached mode
+by forcing the deletion when stopping the container
+the container name must be my_es_container
+a discovery.type environment variable must be single-node"""
+
+# docker container run -d --rm -e "discovery.type=single-node" --name my_es_container elasticsearch:7.2.0
+
+"""ElasticSearch's search engine exposes an API on port 9200 of the host machine it is running on. You can therefore access this API by making an 
+HTTP request of the GET type at the address http://localhost:9200.
+
+Run the following command to perform this query
+"""
+# curl -X GET -i http://localhost:9200
+
+"""This command generates an error: the address is not available. Indeed, the container has its own IP address which is not that of the machine."""
+"""In computer networks, localhost refers to the local network of the machine. This usually means a range of IP addresses. When used in an HTTP request, 
+in most cases, this word refers to the first address in this range, namely 127.0.0.1."""
+
+
+"""By using the docker container inspect command, we can see what is the IP address assigned to this container.
+
+Run the following command to find the container IP address
+"""
+# docker container inspect my_es_container | grep IPAddress
+
+"""If the container is the only one to work, the IP address should be 172.17.0.2: the IP addresses are incremented by 1 progressively starting 
+from this IP address.
+
+Re-execute the previous command with the container address"""
+
+# curl -X GET -i http://172.17.0.2:9200

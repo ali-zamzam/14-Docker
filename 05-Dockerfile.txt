@@ -1,0 +1,196 @@
+"""Dockerfile"""
+
+"""image Create"""
+
+"""One of the advantages of Docker is that you can easily create container images and share them. To build an image, 
+just create a Dockerfile in a folder and run the docker build command in that folder. In this part, we will see how to 
+create a Docker container containing a Flask server."""
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""Create a my_docker_image folder on the host machine and create a Dockerfile"""
+
+# mkdir my_docker_image
+
+# cd my_docker_image
+
+# nano Dockerfile
+
+
+"""To create an image, you must use a base image. The simplest image is scratch but it is empty. One of the simplest 
+images is alpine but here we will choose the debian:latest image in our case. To do this, you must use the FROM keyword."""
+
+"""Add the following line in Dockerfile"""
+
+# FROM debian:latest
+
+
+"""For our server to work, Python must be installed in the container. To execute a command in the image, you can use the 
+RUN keyword.
+
+Add the following line in Dockerfile"""
+
+# RUN apt-get update && apt-get install python3-pip -y && pip3 install flask==2.1.2
+
+"""This command installs Python and pip then installs the flask library. Here, we choose to chain the commands with &&. 
+Indeed, the fact of using only a RUN command makes it possible to lighten the image."""
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""For the following, we need to use a Python file containing the server code."""
+
+"""***In another console***, create a server.py file in the my_docker_image folder and place the following lines there:"""
+
+# nano server.py
+
+"""add and Save this file when exiting"""
+
+from flask import Flask
+
+server = Flask("my_server")
+
+
+@server.route("/")
+def index():
+    return "Hello World from a containerized server"
+
+
+if __name__ == "__main__":
+    server.run(host="0.0.0.0", port=5000)
+
+"""This file allows you to create a server that will run on port 5000 of the machine that launches it, 
+in our case, it will be the container"""
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""To add this file to the Docker image, we can use the ADD command:
+
+Add the following line in Dockerfile"""
+
+# ADD server.py /my_server/server.py
+
+"""This command can be seen as a classic cp: we copy the server.py file from the host machine in the image 
+in the my_server folder"""
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""We are going to change the current folder inside the image with the WORKDIR keyword. This keyword works like the cd command 
+on Linux systems.
+
+Add the following line in Dockerfile"""
+
+# WORKDIR /my_server/
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""As the server is exposed on port 5000, it must be specified that this port can be reached from outside the container 
+if requested:
+
+Add the following line in Dockerfile"""
+
+# EXPOSE 5000
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""Finally, the Docker image requires an entry point, a command that must run when the container is launched.
+
+Add the following line in Dockerfile"""
+
+# CMD python3 server.py
+
+"""Once these lines are added, save and exit the file"""
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""Create the image 
+
+using the following command in the folder containing the Dockerfile"""
+
+# docker image build . -t my_image:latest
+
+"""The point(.) designates the current folder, containing the dockerfile and the -t argument allows you to specify the name 
+of the image as well as the tag. If the tag is not specified, the latest tag is given to it by default. This step can take 
+a little time since you have to download the debian:latest image and then different tools: this download is done when 
+creating the image and not when instantiating it."""
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""check if the image exists in the folder"""
+
+# docker image ls
+
+"""Launch the container by creating a redirect between port 5000 of the machine and that of the container and in detached mode"""
+
+# docker container run -p 5000:5000 -d my_image:latest
+
+
+"""Run a GET request on port 5000 of the host machine"""
+
+# curl -X GET -i http://localhost:5000
+
+"""The message is displayed: the server is operational from inside the container."""
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""In the following table you will find information about the main commands that can be used in a dockerfile."""
+
+# Keyword                                                         Usage
+# FROM image_name:tag                                             to choose the base image
+# RUN bash_ command                                               to run a bash command
+# ADD path_to_local_file path_to_file_in_the_image                to copy a file from the host machine to the image
+# WORKDIR path_in_the_image                                       to change the current folder
+# EXPOSE port                                                     to expose a container port
+# CMD                                                             to choose the command used at startup
+# ENTRYPOINT bash_command                                         to choose container entry modes
+# ENV variable value                                              to set environment variables
+# VOLUME [mounting_point]                                         to create mounting points
+# LABEL                                                           to add metadata to the image
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""share an image"""
+
+"""The easiest way is to create a .tar file, an archive, to easily share this image. To create an archive, one can use the 
+docker image save command and to extract an image from an archive, one can use the docker image load command.
+"""
+
+"""Create an archive from the created image using the following command"""
+
+# docker image save --output my_docker_image.tar my_image
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""Delete the image my_image: 
+
+we can use the -f argument to force the deletion of a running container"""
+
+# docker image rm -f my_image
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""Recreate the image from the archive using the following command"""
+
+# docker image load --input my_docker_image.tar
+
+# ---------------------------------------------------------------------------------------------------------------------
+"""create image with DockerHub"""
+
+"""Another method is to use the DockerHub. We said it in the previous parts but the DockerHub contains both images created by 
+individuals and official images created by companies. We used some official images (debian, ubuntu, elasticsearch, ...) 
+which are developed by official organizations as well as images specific to DataScientest: datascientest/curl, ...
+
+If you want to host an image in DockerHub and therefore make it accessible to everyone, you must create a DockerHub account 
+and connect to this account on your machine using docker login."""
+
+""" We do not advise to put personal identifiers on a hosted machine (in this case here, hosted by us). If you want to perform 
+ this step, you can absolutely install Docker locally and perform this step on your personal computer.
+Once logged in, one should create images that have a two-part name username/imagename:tag where username is your 
+DockerHub username, imagename is the image name, and tag is the tag you want give this picture. When the image is created, 
+it can be uploaded using the command:"""
+
+# docker image push username/imagename:tag
+
+"""The image is then available from the DockerHub and any Docker user can use this image. To make sure, you can delete the 
+image locally and then upload it with"""
+
+# docker image pull username/imagename:tag
+
+
+# ------------------------------------------------------------------------------------------------------------------------
+
+"""on docker pc"""
+
+# - first connect with bash linux
+# - docker login 
+# - docker images
+# - docker tag (id of the image) alizamzam/(name of the image)
+
+"""after that we can see on docker pc a new image then we can push it"""
